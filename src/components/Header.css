@@ -1,0 +1,172 @@
+.header {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) invert(1);
+}
+
+.site-title {
+  font-family: 'DroidKufi', 'IRANSansWeb', sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: white;
+}
+
+.search-section {
+  flex: 1;
+  max-width: 600px;
+  min-width: 300px;
+}
+
+.search-form {
+  width: 100%;
+}
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.search-input-container:focus-within {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  font-family: 'IRANSansWeb', sans-serif;
+  color: #333;
+  background: transparent;
+  direction: rtl;
+}
+
+.search-input::placeholder {
+  color: #666;
+  opacity: 0.8;
+}
+
+.search-button {
+  padding: 0.75rem 1rem;
+  border: none;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  border-radius: 0 25px 25px 0;
+}
+
+.search-button:hover {
+  background: #1565c0;
+}
+
+.user-section {
+  flex-shrink: 0;
+}
+
+.user-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-family: 'IRANSansWeb', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.user-menu-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .search-section {
+    order: 2;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .logo-section {
+    order: 1;
+  }
+  
+  .user-section {
+    order: 3;
+  }
+  
+  .site-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0.75rem 0;
+  }
+  
+  .header-container {
+    padding: 0 0.75rem;
+  }
+  
+  .search-input {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .search-button {
+    padding: 0.6rem 0.8rem;
+  }
+}
