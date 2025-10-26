@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Navigation from './components/Navigation'
@@ -8,51 +7,27 @@ import Statistics from './components/Statistics'
 import Footer from './components/Footer'
 import BookDetail from './components/BookDetail'
 import EpubjsReader from './components/EpubjsReader'
+import { useAppState } from './hooks/useAppState'
 import './App.css'
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeTab, setActiveTab] = useState('home')
-  const [showSearchResults, setShowSearchResults] = useState(false)
-  const [currentView, setCurrentView] = useState('library') // 'library', 'detail', or 'reader'
-  const [selectedBook, setSelectedBook] = useState(null)
+  const { state, actions } = useAppState()
+  const { searchQuery, activeTab, showSearchResults, currentView, selectedBook } = state
 
   const handleSearch = (query) => {
-    setSearchQuery(query)
-    setShowSearchResults(true)
-    setActiveTab('search')
+    actions.setSearchQuery(query)
   }
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab)
-    if (tab !== 'search') {
-      setShowSearchResults(false)
-    }
+    actions.setActiveTab(tab)
   }
 
   const handleBookSelect = (book) => {
-    // Convert book data to EPUB format expected by EpubjsReader
-    const epubBook = {
-      id: book.id || Date.now(),
-      title: book.title,
-      author: book.author,
-      filename: book.filename || `${book.title.replace(/\s+/g, '-').toLowerCase()}.epub`,
-      description: book.description,
-      cover: book.cover,
-      category: book.category,
-      rating: book.rating || 4.2,
-      publishedDate: book.publishedDate,
-      language: book.language || 'ar',
-      fileSize: book.fileSize,
-      downloads: book.downloads || Math.floor(Math.random() * 10000) + 1000,
-      genre: book.genre
-    }
-    setSelectedBook(epubBook)
-    setCurrentView('detail')
+    actions.selectBook(book)
   }
 
   const handleReadBook = (book) => {
-    setCurrentView('reader')
+    actions.setView('reader')
   }
 
   const handleDownloadBook = (book) => {
@@ -66,8 +41,7 @@ function App() {
   }
 
   const handleBackToLibrary = () => {
-    setCurrentView('library')
-    setSelectedBook(null)
+    actions.backToLibrary()
   }
 
   return (

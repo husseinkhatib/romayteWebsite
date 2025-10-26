@@ -4,6 +4,19 @@
 
 A modern, responsive Arabic book discovery website built with React.js and Vite. This project provides an elegant platform for browsing, searching, and discovering Arabic books with a beautiful RTL (Right-to-Left) interface.
 
+## 🎉 Recent Improvements (v2.0)
+
+This project has undergone major improvements including:
+- ✅ **Centralized data management** with service layer architecture
+- ✅ **Modern state management** using useReducer pattern
+- ✅ **36% CSS reduction** (839 → 533 lines) with cleaner design
+- ✅ **Enhanced accessibility** with ARIA landmarks and semantic HTML
+- ✅ **Reusable utility functions** for formatting and data manipulation
+- ✅ **Better code organization** with separation of concerns
+
+📖 See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for detailed changelog
+📚 See [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) for usage guide
+
 ## ✨ Features
 
 - **🔍 Advanced Search**: Powerful search functionality with filtering and sorting options
@@ -61,7 +74,7 @@ masaha-react/
 │   ├── droidkufi.woff2
 │   └── vite.svg
 ├── src/
-│   ├── components/
+│   ├── components/           # UI Components
 │   │   ├── Header.jsx
 │   │   ├── Header.css
 │   │   ├── Navigation.jsx
@@ -72,10 +85,22 @@ masaha-react/
 │   │   ├── BookCard.css
 │   │   ├── SearchResults.jsx
 │   │   ├── SearchResults.css
+│   │   ├── BookDetail.jsx
+│   │   ├── BookDetail.css
 │   │   ├── Statistics.jsx
 │   │   ├── Statistics.css
 │   │   ├── Footer.jsx
-│   │   └── Footer.css
+│   │   ├── Footer.css
+│   │   ├── EpubjsReader.jsx
+│   │   └── EpubjsReader.css
+│   ├── data/                 # Data Layer (NEW)
+│   │   └── books.js          # Centralized book data
+│   ├── services/             # Service Layer (NEW)
+│   │   └── bookService.js    # Data access methods
+│   ├── hooks/                # Custom Hooks (NEW)
+│   │   └── useAppState.js    # State management
+│   ├── utils/                # Utilities (NEW)
+│   │   └── formatters.js     # Formatting functions
 │   ├── App.jsx
 │   ├── App.css
 │   ├── index.css
@@ -83,7 +108,9 @@ masaha-react/
 ├── index.html
 ├── package.json
 ├── vite.config.js
-└── README.md
+├── README.md
+├── IMPROVEMENTS.md           # Detailed changelog (NEW)
+└── QUICK_REFERENCE.md        # Usage guide (NEW)
 ```
 
 ## 🎨 Design System

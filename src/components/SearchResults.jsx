@@ -1,69 +1,31 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import BookCard from './BookCard'
+import bookService from '../services/bookService'
+import { categories, categoryLabels } from '../data/books'
 import './SearchResults.css'
 
 const SearchResults = ({ searchQuery, onClose, onBookSelect }) => {
   const [sortBy, setSortBy] = useState('relevance')
   const [filterBy, setFilterBy] = useState('all')
+  const [searchResults, setSearchResults] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Dummy search results data
-  const searchResults = [
-    {
-      id: 1,
-      title: 'الأسود يليق بك',
-      author: 'أحلام مستغانمي',
-      category: 'رواية',
-      rating: 4.5,
-      downloads: 15420,
-      description: 'رواية عاطفية تحكي قصة حب معقدة في زمن الحرب والسلام، تجمع بين الواقع والخيال في سرد مميز.',
-      filename: 'sample-book-1.epub'
-    },
-    {
-      id: 2,
-      title: 'مئة عام من العزلة',
-      author: 'غابرييل غارسيا ماركيز',
-      category: 'أدب عالمي',
-      rating: 4.8,
-      downloads: 23150,
-      description: 'رواية ملحمية تحكي تاريخ عائلة بوينديا عبر سبعة أجيال في قرية ماكوندو الخيالية.'
-    },
-    {
-      id: 3,
-      title: 'كتاب الفلسفة',
-      author: 'مجموعة مؤلفين',
-      category: 'فلسفة',
-      rating: 4.2,
-      downloads: 8930,
-      description: 'مقدمة شاملة للفلسفة تغطي أهم المدارس الفلسفية والمفكرين عبر التاريخ.'
-    },
-    {
-      id: 4,
-      title: 'تاريخ الحضارة الإسلامية',
-      author: 'د. حسن إبراهيم حسن',
-      category: 'تاريخ',
-      rating: 4.6,
-      downloads: 12750,
-      description: 'دراسة معمقة لتطور الحضارة الإسلامية من بداياتها حتى العصر الحديث.'
-    },
-    {
-      id: 5,
-      title: 'علم النفس التربوي',
-      author: 'د. عبد الحميد جابر',
-      category: 'علم نفس',
-      rating: 4.3,
-      downloads: 9840,
-      description: 'كتاب أساسي في علم النفس التربوي يتناول نظريات التعلم والتطوير المعرفي.'
-    },
-    {
-      id: 6,
-      title: 'الكيمياء العضوية',
-      author: 'د. محمد أحمد السيد',
-      category: 'علوم',
-      rating: 4.1,
-      downloads: 6420,
-      description: 'مرجع شامل في الكيمياء العضوية يغطي المفاهيم الأساسية والتطبيقات العملية.'
+  // Load search results
+  useEffect(() => {
+    const loadSearchResults = async () => {
+      setLoading(true)
+      try {
+        const results = await bookService.searchBooks(searchQuery)
+        setSearchResults(results)
+      } catch (error) {
+        console.error('Error searching books:', error)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    loadSearchResults()
+  }, [searchQuery])
 
   // Filter and sort results
   const filteredAndSortedResults = useMemo(() => {
@@ -74,47 +36,11 @@ const SearchResults = ({ searchQuery, onClose, onBookSelect }) => {
       results = results.filter(book => book.category === filterBy)
     }
 
-    // Filter by search query
-    if (searchQuery) {
-      results = results.filter(book => 
-        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.category.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    }
-
     // Sort results
-    switch (sortBy) {
-      case 'title':
-        results.sort((a, b) => a.title.localeCompare(b.title, 'ar'))
-        break
-      case 'author':
-        results.sort((a, b) => a.author.localeCompare(b.author, 'ar'))
-        break
-      case 'rating':
-        results.sort((a, b) => b.rating - a.rating)
-        break
-      case 'downloads':
-        results.sort((a, b) => b.downloads - a.downloads)
-        break
-      default: // relevance
-        // Keep original order for relevance
-        break
-    }
+    results = bookService.sortBooks(results, sortBy)
 
     return results
-  }, [searchQuery, sortBy, filterBy])
-
-  const categories = ['all', 'رواية', 'أدب عالمي', 'فلسفة', 'تاريخ', 'علم نفس', 'علوم']
-  const categoryLabels = {
-    'all': 'جميع الفئات',
-    'رواية': 'رواية',
-    'أدب عالمي': 'أدب عالمي',
-    'فلسفة': 'فلسفة',
-    'تاريخ': 'تاريخ',
-    'علم نفس': 'علم نفس',
-    'علوم': 'علوم'
-  }
+  }, [searchResults, sortBy, filterBy])
 
   const sortOptions = [
     { value: 'relevance', label: 'الأكثر صلة' },
@@ -124,8 +50,19 @@ const SearchResults = ({ searchQuery, onClose, onBookSelect }) => {
     { value: 'downloads', label: 'التحميلات' }
   ]
 
+  if (loading) {
+    return (
+      <div className="search-results" role="main" aria-label="نتائج البحث">
+        <div className="loading-container">
+          <div className="loading-spinner" role="status" aria-live="polite"></div>
+          <p>جاري البحث...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="search-results">
+    <div className="search-results" role="main" aria-label="نتائج البحث">
       <div className="search-results-header">
         <div className="search-info">
           <h2>نتائج البحث</h2>
@@ -136,33 +73,41 @@ const SearchResults = ({ searchQuery, onClose, onBookSelect }) => {
             تم العثور على {filteredAndSortedResults.length} نتيجة
           </p>
         </div>
-        <button className="close-search" onClick={onClose}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path 
-              d="M18 6L6 18" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            <path 
-              d="M6 6L18 18" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        {onClose && (
+          <button
+            className="close-search"
+            onClick={onClose}
+            aria-label="إغلاق نتائج البحث"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" role="img" aria-hidden="true">
+              <path
+                d="M18 6L6 18"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M6 6L18 18"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        )}
       </div>
 
-      <div className="search-filters">
+      <div className="search-filters" role="search" aria-label="مرشحات البحث">
         <div className="filter-group">
-          <label>ترتيب حسب:</label>
-          <select 
-            value={sortBy} 
+          <label htmlFor="sort-select">ترتيب حسب:</label>
+          <select
+            id="sort-select"
+            value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className="sort-select"
+            aria-label="ترتيب النتائج"
           >
             {sortOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -174,12 +119,14 @@ const SearchResults = ({ searchQuery, onClose, onBookSelect }) => {
 
         <div className="filter-group">
           <label>تصفية حسب الفئة:</label>
-          <div className="category-filters">
+          <div className="category-filters" role="group" aria-label="تصفية حسب الفئة">
             {categories.map(category => (
               <button
                 key={category}
                 className={`category-filter ${filterBy === category ? 'active' : ''}`}
                 onClick={() => setFilterBy(category)}
+                aria-pressed={filterBy === category}
+                aria-label={`تصفية حسب ${categoryLabels[category]}`}
               >
                 {categoryLabels[category]}
               </button>
@@ -188,15 +135,17 @@ const SearchResults = ({ searchQuery, onClose, onBookSelect }) => {
         </div>
       </div>
 
-      <div className="search-results-grid">
+      <div className="search-results-grid" role="region" aria-label="نتائج الكتب">
         {filteredAndSortedResults.length > 0 ? (
           filteredAndSortedResults.map(book => (
-            <BookCard key={book.id} book={book} onBookSelect={onBookSelect} />
+            <article key={book.id}>
+              <BookCard book={book} onBookSelect={onBookSelect} />
+            </article>
           ))
         ) : (
-          <div className="no-results">
+          <div className="no-results" role="status">
             <div className="no-results-icon">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" role="img" aria-label="أيقونة لا توجد نتائج">
                 <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" />
                 <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M8 11H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
